@@ -10,6 +10,8 @@ import com.luxoft.bankapp.service.BankingImpl;
 import com.luxoft.bankapp.model.Client.Gender;
 import com.luxoft.bankapp.service.storage.ClientRepository;
 import com.luxoft.bankapp.service.storage.MapClientRepository;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class BankApplication {
 
@@ -18,8 +20,11 @@ public class BankApplication {
 
     public static void main(String[] args) {
 
-        ClientRepository repository = new MapClientRepository();
-        Banking banking = initialize(repository);
+//        ClientRepository repository = new MapClientRepository();
+//        Banking banking = initialize(repository);
+
+        ApplicationContext classPathXmlApplicationContext = new ClassPathXmlApplicationContext("application-context.xml");
+        Banking banking = initialize(classPathXmlApplicationContext);
 
         workWithExistingClients(banking);
 
@@ -100,10 +105,11 @@ public class BankApplication {
     /*
      * Method that creates a few clients and initializes them with sample values
      */
-    public static Banking initialize(ClientRepository repository) {
+    public static Banking initialize(ApplicationContext context) {
 
-        Banking banking = new BankingImpl();
-        banking.setRepository(repository);
+//        Banking banking = new BankingImpl();
+//        banking.setRepository(repository);
+        Banking banking = (Banking) context.getBean("banking");
 
         Client client_1 = new Client(CLIENT_NAMES[0], Gender.MALE);
 
