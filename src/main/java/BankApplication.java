@@ -30,15 +30,17 @@ public class BankApplication {
 
         bankingServiceDemo(banking);
 
-//        bankReportsDemo(repository);
+        bankReportsDemo(classPathXmlApplicationContext);
     }
 
-    public static void bankReportsDemo(ClientRepository repository) {
+    public static void bankReportsDemo(ApplicationContext context) {
 
         System.out.println("\n=== Using BankReportService ===\n");
 
-        BankReportService reportService = new BankReportServiceImpl();
-        reportService.setRepository(repository);
+//        BankReportService reportService = new BankReportServiceImpl();
+//        reportService.setRepository(repository);
+
+        BankReportService reportService = (BankReportService) context.getBean("bankReport");
 
         System.out.println("Number of clients: " + reportService.getNumberOfBankClients());
 
