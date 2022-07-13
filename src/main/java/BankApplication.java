@@ -23,7 +23,7 @@ public class BankApplication {
 //        ClientRepository repository = new MapClientRepository();
 //        Banking banking = initialize(repository);
 
-        ApplicationContext classPathXmlApplicationContext = new ClassPathXmlApplicationContext("application-context.xml");
+        ApplicationContext classPathXmlApplicationContext = new ClassPathXmlApplicationContext("application-context.xml", "test-clients.xml");
         Banking banking = initialize(classPathXmlApplicationContext);
 
         workWithExistingClients(banking);
@@ -113,18 +113,22 @@ public class BankApplication {
 //        banking.setRepository(repository);
         Banking banking = (Banking) context.getBean("banking");
 
-        Client client_1 = new Client(CLIENT_NAMES[0], Gender.MALE);
+//        Client client_1 = new Client(CLIENT_NAMES[0], Gender.MALE);
 
-        AbstractAccount savingAccount = new SavingAccount(1000);
-        client_1.addAccount(savingAccount);
+//        AbstractAccount savingAccount = new SavingAccount(1000);
+//        client_1.addAccount(savingAccount);
 
-        AbstractAccount checkingAccount = new CheckingAccount(1000);
-        client_1.addAccount(checkingAccount);
+//        AbstractAccount checkingAccount = new CheckingAccount(1000);
+//        client_1.addAccount(checkingAccount);
 
-        Client client_2 = new Client(CLIENT_NAMES[1], Gender.MALE);
+        Client client_1 = (Client) context.getBean("client1");
 
-        AbstractAccount checking = new CheckingAccount(1500);
-        client_2.addAccount(checking);
+//        Client client_2 = new Client(CLIENT_NAMES[1], Gender.MALE);
+
+//        AbstractAccount checking = new CheckingAccount(1500);
+//        client_2.addAccount(checking);
+
+        Client client_2 = (Client) context.getBean("client2");
 
         banking.addClient(client_1);
         banking.addClient(client_2);
