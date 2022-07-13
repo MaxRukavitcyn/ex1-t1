@@ -13,6 +13,8 @@ import com.luxoft.bankapp.service.storage.MapClientRepository;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static com.luxoft.bankapp.model.Client.Gender.MALE;
+
 public class BankApplication {
 
     private static final String[] CLIENT_NAMES =
@@ -91,12 +93,12 @@ public class BankApplication {
         Client adam = banking.getClient(CLIENT_NAMES[1]);
         adam.setDefaultActiveAccountIfNotSet();
 
-        adam.withdraw(1500);
+        adam.withdraw(1_500);
 
         double balance = adam.getBalance();
         System.out.println("\n" + adam.getName() + ", current balance: " + balance);
 
-        banking.transferMoney(jonny, adam, 1000);
+        banking.transferMoney(jonny, adam, 1_000);
 
         System.out.println("\n=======================================");
         banking.getClients().forEach(System.out::println);
@@ -111,17 +113,17 @@ public class BankApplication {
 //        banking.setRepository(repository);
         Banking banking = (Banking) context.getBean("banking");
 
-        Client client_1 = new Client(CLIENT_NAMES[0], Gender.MALE);
+        Client client_1 = new Client(CLIENT_NAMES[0], MALE);
 
-        AbstractAccount savingAccount = new SavingAccount(1000);
+        AbstractAccount savingAccount = new SavingAccount(1_000);
         client_1.addAccount(savingAccount);
 
-        AbstractAccount checkingAccount = new CheckingAccount(1000);
+        AbstractAccount checkingAccount = new CheckingAccount(1_000);
         client_1.addAccount(checkingAccount);
 
-        Client client_2 = new Client(CLIENT_NAMES[1], Gender.MALE);
+        Client client_2 = new Client(CLIENT_NAMES[1], MALE);
 
-        AbstractAccount checking = new CheckingAccount(1500);
+        AbstractAccount checking = new CheckingAccount(1_500);
         client_2.addAccount(checking);
 
         banking.addClient(client_1);
