@@ -103,7 +103,7 @@ public class Client {
 
     public void addAccount(AbstractAccount account) throws AccountNumberLimitException {
 
-        if (accounts.size() >= 2) {
+        if (accounts.size() >= 3) {
 
             throw new AccountNumberLimitException();
         }
