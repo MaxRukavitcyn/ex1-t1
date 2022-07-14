@@ -3,9 +3,15 @@ package com.luxoft.bankapp.model;
 import com.luxoft.bankapp.exceptions.AccountNumberLimitException;
 import com.luxoft.bankapp.exceptions.ActiveAccountNotSet;
 import com.luxoft.bankapp.service.storage.ClientRepository;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Data
+@NoArgsConstructor
 public class Client {
 
     private long id;
@@ -21,9 +27,6 @@ public class Client {
     private String city;
 
     private ClientRepository repository;
-
-    public Client() {
-    }
 
     public Client(String name, Gender gender) {
         this.name = name;
@@ -184,46 +187,6 @@ public class Client {
         return builder.toString();
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public AbstractAccount getActiveAccount() {
-        return activeAccount;
-    }
-
-    public void setActiveAccount(AbstractAccount activeAccount) {
-        this.activeAccount = activeAccount;
-    }
-
-    public Gender getGender() {
-        return gender;
-    }
-
-    public void setGender(Gender gender) {
-        this.gender = gender;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
     public enum Gender {
 
         MALE("Mr"), FEMALE("Ms"), UNDEFINED("");
@@ -239,7 +202,4 @@ public class Client {
         }
     }
 
-    public void setRepository(ClientRepository repository) {
-        this.repository = repository;
-    }
 }
