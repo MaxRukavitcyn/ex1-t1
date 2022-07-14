@@ -37,9 +37,7 @@ public class CheckingAccount extends AbstractAccount {
     public void withdraw(double amount) throws OverDraftLimitExceededException {
 
         if (getBalance() + overdraft < amount) {
-
-            throw new OverDraftLimitExceededException(
-                    this.getClass().getSimpleName(), getBalance() + overdraft);
+            throw new OverDraftLimitExceededException(String.valueOf(getId()), getBalance() + overdraft);
         }
 
         setBalance(getBalance() - amount);

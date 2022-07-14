@@ -1,125 +1,80 @@
 package com.luxoft.bankapp;
 
-import com.luxoft.bankapp.exceptions.NotEnoughFundsException;
 import com.luxoft.bankapp.model.AbstractAccount;
-import com.luxoft.bankapp.model.CheckingAccount;
 import com.luxoft.bankapp.model.Client;
+import com.luxoft.bankapp.model.SavingAccount;
 import com.luxoft.bankapp.service.Banking;
-import com.luxoft.bankapp.service.audit.AuditService;
+import com.luxoft.bankapp.service.BankingImpl;
 import com.luxoft.bankapp.service.operations.BankingOperationsService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import java.util.concurrent.TimeUnit;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = BankApplication.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class BankApplicationTests3 {
+    private static final String[] CLIENT_NAMES =
+            {"Jonny Bravo", "Adam Budzinski", "Anna Smith"};
+
     @Autowired
     private Banking banking;
 
     @Autowired
-    private BankingOperationsService
-            bankingOperationsService;
+    private BankingOperationsService bankingOperationsService;
 
-    @Autowired
-    private AuditService auditService;
-
-    private Client client;
-
-    @BeforeEach
-    public void init()
-    {
-        client = banking.getClient("Jonny Bravo");
-        client.setDefaultActiveAccountIfNotSet();
-        client.getActiveAccount().setId(999);
+    @Test
+    public void bankingBeanConfiguration() {
+        assertNotNull(banking, "banking bean should be configured");
+        assertTrue((banking instanceof BankingImpl), "storage should be instantiated with BankingImpl class");
     }
 
     @Test
-    public void depositToClient1()
-    {
-        double amount = 100;
+    public void deposit() {
+        Client client = banking.getClient(CLIENT_NAMES[0]);
 
-        int countOfEvents = auditService.getEvents().size();
-
-        bankingOperationsService.deposit(client, amount);
-
-        assertEquals( countOfEvents + 1, auditService.getEvents().size());
-    }
-
-    @Test
-    public void depositToClient2()
-    {
-        AbstractAccount account = client.getActiveAccount();
+        assertEquals(CLIENT_NAMES[0], client.getName());
 
         double amount = 100;
+        double expected = client.getActiveAccount().getBalance() + amount;
 
-        int countOfEvents = auditService.getEvents().size();
+        client.deposit(100);
+        client = banking.getClient(CLIENT_NAMES[0]);
 
-        bankingOperationsService.deposit(account, amount);
-
-        assertEquals( countOfEvents + 1, auditService.getEvents().size());
+        assertEquals(expected, client.getActiveAccount().getBalance());
     }
 
     @Test
-    public void getClientBalance()
-    {
-        int countOfEvents = auditService.getEvents().size();
+    public void withdraw() {
+        Client client = banking.getClient(CLIENT_NAMES[0]);
 
-        bankingOperationsService.getBalance(client);
-
-        assertEquals( countOfEvents + 1, auditService.getEvents().size());
-    }
-
-    @Test
-    public void withdrawFromClient1()
-    {
-        double amount = 100;
-
-        int countOfEvents = auditService.getEvents().size();
-
-        bankingOperationsService.withdraw(client, amount);
-
-        assertEquals( countOfEvents + 2, auditService.getEvents().size());
-    }
-
-    @Test
-    public void withdrawFromClient2()
-    {
-        AbstractAccount account = client.getActiveAccount();
+        assertEquals(CLIENT_NAMES[0], client.getName());
 
         double amount = 100;
+        double expected = client.getActiveAccount().getBalance() - amount;
 
-        int countOfEvents = auditService.getEvents().size();
+        client.withdraw(100);
+        client = banking.getClient(CLIENT_NAMES[0]);
 
-        bankingOperationsService.withdraw(account, amount);
-
-        assertEquals( countOfEvents + 2, auditService.getEvents().size());
+        assertEquals(expected, client.getActiveAccount().getBalance());
     }
 
     @Test
-    public void withdrawFromClient3()
-    {
-        AbstractAccount account = client.getActiveAccount();
+    public void adminResetBalance() throws Exception {
+        Client client = banking.getClient(CLIENT_NAMES[0]);
+        AbstractAccount account = client.getAccount(SavingAccount.class);
 
-        double balance = account.getBalance();
-        double overdraft = 0;
+        bankingOperationsService.adminResetBalance(account);
 
-        if (account instanceof CheckingAccount)
-        {
-            overdraft = ((CheckingAccount) account).getOverdraft();
-        }
+        TimeUnit.SECONDS.sleep(1);
 
-        double amount = balance + overdraft + 1000;
-
-        int countOfEvents = auditService.getEvents().size();
-
-        assertThrows(NotEnoughFundsException.class,
-                () -> bankingOperationsService.withdraw(account, amount));
-
-        assertEquals(auditService.getEvents().size(), countOfEvents + 2);
+        client = banking.getClient(CLIENT_NAMES[0]);
+        assertEquals(0, client.getAccount(SavingAccount.class).getBalance());
     }
 }
-

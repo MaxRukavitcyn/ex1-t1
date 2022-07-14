@@ -10,9 +10,12 @@ public interface BankingOperationsService {
 
     void deposit(Client client, double amount);
 
-    void deposit(AbstractAccount account, double amount);
+    AbstractAccount deposit(AbstractAccount account, double amount);
 
     void withdraw(Client client, double amount);
 
-    void withdraw(AbstractAccount client, double amount);
+    AbstractAccount withdraw(AbstractAccount account, double amount);
+
+    void adminResetBalance(AbstractAccount account);
+
 }

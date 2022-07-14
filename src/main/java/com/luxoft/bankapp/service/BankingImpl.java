@@ -3,123 +3,108 @@ package com.luxoft.bankapp.service;
 import com.luxoft.bankapp.exceptions.AccountNotFoundException;
 import com.luxoft.bankapp.exceptions.ClientNotFoundException;
 import com.luxoft.bankapp.model.*;
+import com.luxoft.bankapp.service.storage.AccountRepository;
 import com.luxoft.bankapp.service.storage.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
+@Scope(scopeName = ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class BankingImpl implements Banking {
 
     @Autowired
-    private ClientRepository repository;
+    private ClientRepository clientRepository;
+
+    @Autowired
+    private AccountRepository accountRepository;
 
     @Override
-    public Client addClient(Client c) {
+    public Client addClient(Client client) {
 
-        Client created = repository.add(c);
-//        c.setRepository(repository);
-
-        return created;
+        return clientRepository.save(client);
     }
 
     @Override
     public Client getClient(String name) {
 
-        Client foundClient = repository.getBy(name);
-
-        if (foundClient != null) {
-
-            return foundClient;
-        }
-
-        throw new ClientNotFoundException(name);
+        return clientRepository
+                .findByName(name)
+                .orElseThrow(() -> new ClientNotFoundException(name));
     }
 
     @Override
-    public List<Client> getClients() {
-
-        return repository.getAll();
+    public List<Client> getClients()
+    {
+        return StreamSupport
+                .stream(clientRepository.findAll().spliterator(), false)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public void deleteClient(Client c) {
+    public void deleteClient(Client client) {
 
-        repository.remove(c.getId());
+        clientRepository.deleteById(client.getId());
     }
 
     @Override
     public AbstractAccount createAccount(Client c, Class type) {
 
-        AbstractAccount account = null;
+        Client client = clientRepository
+                .findById(c.getId())
+                .orElseThrow(() ->
+                        new ClientNotFoundException(c.getId()));
 
-        Client client = repository.get(c.getId());
+        AbstractAccount account = new SavingAccount(0);
 
-        if (client != null) {
-
-            account = new SavingAccount(0);
-
-            if (type == CheckingAccount.class) {
-                account = new CheckingAccount(0);
-            }
-
-            client.addAccount(account);
-
-            repository.update(c);
+        if (type == CheckingAccount.class) {
+            account = new CheckingAccount(0);
         }
+
+        account = accountRepository.save(account);
+        client.addAccount(account);
+
+        clientRepository.save(client);
 
         return account;
     }
 
-    @Override
-    public void updateAccount(Client c, AbstractAccount account) {
 
-        Client clientToUpdate = repository.get(c.getId());
-
-        if (clientToUpdate != null) {
-
-            clientToUpdate.removeAccount(account.getClass());
-            clientToUpdate.addAccount(account);
-
-            repository.update(c);
-        }
-    }
 
     @Override
-    public AbstractAccount getAccount(Client c, Class type) {
+    public AbstractAccount getAccount(Client client, Class type) {
 
-        return c.getAccounts().stream()
+        return client.getAccounts().stream()
                 .filter(a -> a.getClass() == type)
                 .findFirst()
                 .orElseThrow(() -> new AccountNotFoundException());
     }
 
+
     @Override
     public List<AbstractAccount> getAllAccounts() {
-
-        return repository.getAll()
-                .stream()
-                .flatMap(c -> c.getAccounts().stream())
+        return StreamSupport
+                .stream(accountRepository.findAll().spliterator(), false)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<AbstractAccount> getAllAccounts(Client c) {
+    public List<AbstractAccount> getAllAccounts(Client client) {
 
-        return new ArrayList<>(repository.get(c.getId()).getAccounts());
+        return clientRepository
+                .findById(client.getId())
+                .map(client1 -> client1.getAccounts())
+                .orElseGet(null);
     }
 
     @Override
     public void transferMoney(Client from, Client to, double amount) {
-
         from.withdraw(amount);
         to.deposit(amount);
-    }
-
-    public void setRepository(ClientRepository repository) {
-
-        this.repository = repository;
     }
 }

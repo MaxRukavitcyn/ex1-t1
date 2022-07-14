@@ -18,8 +18,6 @@ public interface Banking {
 
     AbstractAccount createAccount(Client client, Class type);
 
-    void updateAccount(Client c, AbstractAccount account);
-
     AbstractAccount getAccount(Client client, Class type);
 
     List<AbstractAccount> getAllAccounts();
@@ -27,6 +25,4 @@ public interface Banking {
     List<AbstractAccount> getAllAccounts(Client client);
 
     void transferMoney(Client from, Client to, double amount);
-
-    void setRepository(ClientRepository storage);
 }

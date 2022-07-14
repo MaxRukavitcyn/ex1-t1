@@ -1,14 +1,11 @@
 package com.luxoft.bankapp.exceptions;
 
 public class ClientNotFoundException extends RuntimeException {
-    private String name;
-
     public ClientNotFoundException(String name) {
-        this.name = name;
+        super("Client " + name + " not found.");
     }
 
-    @Override
-    public String getMessage() {
-        return "Client " + name + " not found.";
+    public ClientNotFoundException(Long id) {
+        super("Client with id: " + id + " not found.");
     }
 }

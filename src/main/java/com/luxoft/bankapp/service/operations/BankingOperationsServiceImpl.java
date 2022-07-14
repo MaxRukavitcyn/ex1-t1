@@ -13,7 +13,7 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
 
     @Override
     public double getBalance(AbstractAccount account) {
-        return account.getBalance();
+        return 0.0;
     }
 
     @Override
@@ -22,8 +22,8 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
     }
 
     @Override
-    public void deposit(AbstractAccount account, double amount) {
-        account.deposit(amount);
+    public AbstractAccount deposit(AbstractAccount account, double amount) {
+        return null;
     }
 
     @Override
@@ -32,7 +32,11 @@ public class BankingOperationsServiceImpl implements BankingOperationsService {
     }
 
     @Override
-    public void withdraw(AbstractAccount account, double amount) {
-        account.withdraw(amount);
+    public AbstractAccount withdraw(AbstractAccount account, double amount) {
+        return null;
+    }
+
+    @Override
+    public void adminResetBalance(AbstractAccount account) {
     }
 }

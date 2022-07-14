@@ -1,20 +1,12 @@
 package com.luxoft.bankapp.service.storage;
 
 import com.luxoft.bankapp.model.Client;
+import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Optional;
 
-public interface ClientRepository {
+public interface ClientRepository extends CrudRepository<Client, Long>  {
 
-    Client add(Client client);
-
-    Client get(long id);
-
-    Client getBy(String name);
-
-    List<Client> getAll();
-
-    Client update(Client o);
-
-    boolean remove(long id);
+    Optional<Client> findByName(String name);
 }

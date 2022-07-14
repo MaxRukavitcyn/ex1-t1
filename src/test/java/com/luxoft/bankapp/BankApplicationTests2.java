@@ -1,108 +1,58 @@
 package com.luxoft.bankapp;
 
-import com.luxoft.bankapp.BankApplication;
-import com.luxoft.bankapp.exceptions.NotEnoughFundsException;
-import com.luxoft.bankapp.model.AbstractAccount;
-import com.luxoft.bankapp.model.CheckingAccount;
-import com.luxoft.bankapp.model.Client;
-import com.luxoft.bankapp.service.Banking;
-import com.luxoft.bankapp.service.operations.BankingOperationsService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.springframework.test.annotation.DirtiesContext;
 
 @SpringBootTest(classes = BankApplication.class)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class BankApplicationTests2 {
-    @Autowired
-    private Banking banking;
+    private static final String[] CLIENT_NAMES =
+            {"Jonny Bravo", "Adam Budzinski", "Anna Smith"};
 
-    @Autowired
-    private BankingOperationsService bankingOperationsService;
-
-    private Client client;
-
-    @BeforeEach
-    public void init() {
-        client = banking.getClient("Jonny Bravo");
-        client.setDefaultActiveAccountIfNotSet();
-        client.getActiveAccount().setId(999);
-    }
-
-    @Test
-    public void depositToClient1() {
-        AbstractAccount account = client.getActiveAccount();
-        double balance = account.getBalance();
-        double amount = 100;
-
-        bankingOperationsService.deposit(client, amount);
-
-        assertEquals(account.getBalance(), balance + amount);
-    }
-
-    @Test
-    public void depositToClient2() {
-        AbstractAccount account = client.getActiveAccount();
-        double balance = account.getBalance();
-        double amount = 100;
-
-        bankingOperationsService.deposit(account, amount);
-
-        assertEquals(account.getBalance(), balance + amount);
-    }
-
-    @Test
-    public void getClientBalance() {
-        AbstractAccount account = client.getActiveAccount();
-
-        double balance = bankingOperationsService.getBalance(client);
-
-        assertEquals(balance, account.getBalance());
-    }
-
-    @Test
-    public void withdrawFromClient1() {
-        AbstractAccount account = client.getActiveAccount();
-        double balance = account.getBalance();
-        double amount = 100;
-
-
-        bankingOperationsService.withdraw(client, amount);
-
-        assertEquals(account.getBalance(), balance - amount);
-    }
-
-    @Test
-    public void withdrawFromClient2() {
-        AbstractAccount account = client.getActiveAccount();
-        double balance = account.getBalance();
-        double amount = 100;
-
-
-        bankingOperationsService.withdraw(account, amount);
-
-        assertEquals(account.getBalance(), balance - amount);
-    }
-
-    @Test
-    public void withdrawFromClient3() {
-        AbstractAccount account = client.getActiveAccount();
-        double balance = account.getBalance();
-        double overdraft = 0;
-
-        if (account instanceof CheckingAccount) {
-            overdraft = ((CheckingAccount) account).getOverdraft();
-        }
-
-        double amount = balance + overdraft + 1000;
-
-        assertThrows(NotEnoughFundsException.class,
-                () -> bankingOperationsService.withdraw(account, amount));
-
-        assertEquals(account.getBalance(), balance);
-    }
-
+//    @Autowired
+//    private ClientRepository clientRepository;
+//
+//    @Test
+//    public void storageBeanConfiguration() {
+//        assertNotNull(clientRepository, "storage bean should be configured");
+//        assertTrue((clientRepository instanceof ClientRepository), "storage should be instantiated with ClientCrudStorage class");
+//    }
+//
+//    @Test
+//    public void findClientsSortedByName() {
+//        List<Client> clients = clientRepository.findAll(Sort.by("name"));
+//
+//        assertEquals(3, clients.size());
+//        assertEquals(CLIENT_NAMES[1], clients.get(0).getName());
+//        assertEquals(CLIENT_NAMES[2], clients.get(1).getName());
+//        assertEquals(CLIENT_NAMES[0], clients.get(2).getName());
+//    }
+//
+//    @Test
+//    public void findClientsSortedByCity() {
+//        List<Client> clients = clientRepository.findAll(Sort.by("city"));
+//
+//        assertEquals(CLIENT_NAMES[1], clients.get(0).getName());
+//        assertEquals(CLIENT_NAMES[0], clients.get(1).getName());
+//        assertEquals(CLIENT_NAMES[2], clients.get(2).getName());
+//    }
+//
+//    @Test
+//    public void findClientsPage1() {
+//        List<Client> clients = clientRepository.findAll(PageRequest.of(0, 2)).toList();
+//
+//        assertEquals(2, clients.size());
+//        assertEquals(CLIENT_NAMES[1], clients.get(0).getName());
+//        assertEquals(CLIENT_NAMES[2], clients.get(1).getName());
+//    }
+//
+//    @Test
+//    public void findClientsPage2() {
+//        List<Client> clients = clientRepository.findAll(PageRequest.of(1, 2)).toList();
+//
+//        assertEquals(1, clients.size());
+//        assertEquals(CLIENT_NAMES[0], clients.get(0).getName());
+//    }
 }

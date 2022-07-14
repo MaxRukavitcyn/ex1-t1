@@ -12,7 +12,7 @@ public class NotEnoughFundsException extends BankException {
 
     @Override
     public String getMessage() {
-        return "Not Enough Funds " + amount;
+        return "Not Enough Funds. Your balance is " + amount;
     }
 
 }
