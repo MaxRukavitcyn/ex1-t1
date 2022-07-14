@@ -113,36 +113,4 @@ public class BankApplicationTask1Tests {
         assertEquals(1500, account.getOverdraft());
     }
 
-    @Test
-    public void workWithExistingClientsTest() {
-        BankApplication.workWithExistingClients(applicationContext);
-
-        Client jonny = banking.getClient(CLIENT_NAMES[0]);
-        assertEquals(4000, jonny.getActiveAccount().getBalance());
-
-        Client adam = banking.getClient(CLIENT_NAMES[1]);
-        assertEquals(-500, adam.getActiveAccount().getBalance());
-    }
-
-    @Test
-    public void bankingServiceDemoTest() {
-        BankApplication.bankingServiceDemo(applicationContext);
-
-        Client anna = banking.getClient(CLIENT_NAMES[2]);
-        assertNotNull(anna, "banking should have client with name: " + CLIENT_NAMES[2]);
-
-        AbstractAccount saving = anna.getAccount(SavingAccount.class);
-
-        assertNotNull(saving, CLIENT_NAMES[2] + " should have "
-                + SavingAccount.class.getSimpleName() + " account.");
-        assertEquals(1000, saving.getBalance());
-
-
-        AbstractAccount checking = anna.getAccount(CheckingAccount.class);
-
-        assertNotNull(checking, CLIENT_NAMES[2] + " should have "
-                + CheckingAccount.class.getSimpleName() + " account.");
-        assertEquals(3000, checking.getBalance());
-    }
-
 }
