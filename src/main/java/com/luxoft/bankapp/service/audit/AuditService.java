@@ -20,7 +20,7 @@ public class AuditService implements Audit {
     }
 
     @Override
-    @EventListener
+    @EventListener(condition = "#event.amount >= @eventConditionFilter.depositLimit")
     public void auditOperation(DepositEvent event) {
 
         events.add(event);
@@ -31,7 +31,7 @@ public class AuditService implements Audit {
     }
 
     @Override
-    @EventListener
+    @EventListener(condition = "#event.amount >= @eventConditionFilter.withdrawalLimit")
     public void auditOperation(WithdrawEvent event) {
 
         events.add(event);
