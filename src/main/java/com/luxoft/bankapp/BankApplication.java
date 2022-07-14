@@ -1,23 +1,26 @@
+package com.luxoft.bankapp;
+
 import com.luxoft.bankapp.exceptions.ActiveAccountNotSet;
 import com.luxoft.bankapp.model.AbstractAccount;
 import com.luxoft.bankapp.model.CheckingAccount;
 import com.luxoft.bankapp.model.Client;
 import com.luxoft.bankapp.model.SavingAccount;
 import com.luxoft.bankapp.service.BankReportService;
-import com.luxoft.bankapp.service.BankReportServiceImpl;
 import com.luxoft.bankapp.service.Banking;
-import com.luxoft.bankapp.service.BankingImpl;
 import com.luxoft.bankapp.model.Client.Gender;
-import com.luxoft.bankapp.service.storage.ClientRepository;
-import com.luxoft.bankapp.service.storage.MapClientRepository;
+import com.luxoft.bankapp.service.BankingImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.*;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.env.Environment;
 
-@Configuration
-@ComponentScan("com.luxoft.bankapp")
+import static com.luxoft.bankapp.model.Client.Gender.FEMALE;
+import static com.luxoft.bankapp.model.Client.Gender.MALE;
+
+@SpringBootApplication
 @PropertySource("classpath:clients.properties")
 public class BankApplication {
 
@@ -30,7 +33,7 @@ public class BankApplication {
     @Bean(name = "checkingAccount2")
     public CheckingAccount getDemoCheckingAccount2()
     {
-        return new CheckingAccount(1500);
+        return new CheckingAccount(1_500);
     }
 
     @Bean(name = "client2")
@@ -38,7 +41,7 @@ public class BankApplication {
     {
         String name = environment.getProperty("client2");
 
-        Client client = new Client(name, Gender.MALE);
+        Client client = new Client(name, MALE);
         client.setCity("Kiev");
 
         AbstractAccount checking = (CheckingAccount)
@@ -51,13 +54,13 @@ public class BankApplication {
 
     @Bean(name = "savingAccount1")
     public SavingAccount getDemoSavingAccount1() {
-        return new SavingAccount(1000);
+        return new SavingAccount(1_000);
     }
 
     @Bean(name = "checkingAccount1")
     public CheckingAccount getDemoCheckingAccount1()
     {
-        return new CheckingAccount(1000);
+        return new CheckingAccount(1_000);
     }
 
     @Bean(name = "client1")
@@ -65,7 +68,7 @@ public class BankApplication {
     {
         String name = environment.getProperty("client1");
 
-        Client client = new Client(name, Gender.MALE);
+        Client client = new Client(name, MALE);
         client.setCity("Moscow");
 
         AbstractAccount checking = (CheckingAccount)
@@ -76,24 +79,27 @@ public class BankApplication {
         return client;
     }
 
+    @Bean
+    CommandLineRunner init(ApplicationContext context)
+    {
+        return env ->
+        {
+            Banking banking = context.getBean(BankingImpl.class);
+
+            Client client_1 = (Client) context.getBean("client1");
+            Client client_2 = (Client) context.getBean("client2");
+
+            banking.addClient(client_1);
+            banking.addClient(client_2);
+        };
+    }
+
 
     private static final String[] CLIENT_NAMES =
             {"Jonny Bravo", "Adam Budzinski", "Anna Smith"};
 
     public static void main(String[] args) {
-
-//        ClientRepository repository = new MapClientRepository();
-//        Banking banking = initialize(repository);
-
-        ApplicationContext context = new
-                AnnotationConfigApplicationContext(BankApplication.class);
-        Banking banking = initialize(context);
-
-        workWithExistingClients(context);
-
-        bankingServiceDemo(context);
-
-        bankReportsDemo(context);
+        SpringApplication.run(BankApplication.class, args);
     }
 
     public static void bankReportsDemo(ApplicationContext context) {
@@ -120,16 +126,16 @@ public class BankApplication {
 
         Banking banking = context.getBean(Banking.class);
 
-        Client anna = new Client(CLIENT_NAMES[2], Gender.FEMALE);
+        Client anna = new Client(CLIENT_NAMES[2], FEMALE);
         anna = banking.addClient(anna);
 
         AbstractAccount saving = banking.createAccount(anna, SavingAccount.class);
-        saving.deposit(1000);
+        saving.deposit(1_000);
 
         banking.updateAccount(anna, saving);
 
         AbstractAccount checking = banking.createAccount(anna, CheckingAccount.class);
-        checking.deposit(3000);
+        checking.deposit(3_000);
 
         banking.updateAccount(anna, checking);
 
@@ -162,12 +168,12 @@ public class BankApplication {
         Client adam = banking.getClient(CLIENT_NAMES[1]);
         adam.setDefaultActiveAccountIfNotSet();
 
-        adam.withdraw(1500);
+        adam.withdraw(1_500);
 
         double balance = adam.getBalance();
         System.out.println("\n" + adam.getName() + ", current balance: " + balance);
 
-        banking.transferMoney(jonny, adam, 1000);
+        banking.transferMoney(jonny, adam, 1_000);
 
         System.out.println("\n=======================================");
         banking.getClients().forEach(System.out::println);
@@ -185,15 +191,15 @@ public class BankApplication {
 
 //        Client client_1 = new Client(CLIENT_NAMES[0], Gender.MALE);
 
-        AbstractAccount savingAccount = new SavingAccount(1000);
+        AbstractAccount savingAccount = new SavingAccount(1_000);
         client_1.addAccount(savingAccount);
 
-        AbstractAccount checkingAccount = new CheckingAccount(1000);
+        AbstractAccount checkingAccount = new CheckingAccount(1_000);
         client_1.addAccount(checkingAccount);
 
 //        Client client_2 = new Client(CLIENT_NAMES[1], Gender.MALE);
 
-        AbstractAccount checking = new CheckingAccount(1500);
+        AbstractAccount checking = new CheckingAccount(1_500);
         client_2.addAccount(checking);
 
         banking.addClient(client_1);

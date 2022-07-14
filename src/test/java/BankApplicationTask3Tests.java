@@ -1,3 +1,4 @@
+import com.luxoft.bankapp.BankApplication;
 import com.luxoft.bankapp.model.*;
 import com.luxoft.bankapp.service.Banking;
 import com.luxoft.bankapp.service.BankingImpl;
@@ -66,7 +67,7 @@ public class BankApplicationTask3Tests {
         }
 
         // TODO you can replace code above with this when will have the method
-//        BankApplication.initialize(applicationContext);
+//        com.luxoft.bankapp.BankApplication.initialize(applicationContext);
     }
 
     @Test
