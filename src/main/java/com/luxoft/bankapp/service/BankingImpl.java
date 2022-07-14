@@ -20,7 +20,7 @@ public class BankingImpl implements Banking {
     public Client addClient(Client c) {
 
         Client created = repository.add(c);
-        c.setRepository(repository);
+//        c.setRepository(repository);
 
         return created;
     }

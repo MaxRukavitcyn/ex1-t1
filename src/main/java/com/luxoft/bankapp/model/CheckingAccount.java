@@ -2,8 +2,13 @@ package com.luxoft.bankapp.model;
 
 import com.luxoft.bankapp.exceptions.OverDraftLimitExceededException;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+
+@Entity
 public class CheckingAccount extends AbstractAccount {
 
+    @Column(name = "OVERDRAFT")
     private double overdraft = 0;
 
     public CheckingAccount() {

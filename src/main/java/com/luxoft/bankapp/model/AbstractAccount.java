@@ -1,11 +1,20 @@
 package com.luxoft.bankapp.model;
 
+
+import javax.persistence.*;
 import java.util.Objects;
 
+import static javax.persistence.GenerationType.*;
+
+@Entity
+@Table(name="ACCOUNT")
 public abstract class AbstractAccount {
 
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private long id;
 
+    @Column(name = "BALANCE")
     private double balance;
 
     public AbstractAccount() {

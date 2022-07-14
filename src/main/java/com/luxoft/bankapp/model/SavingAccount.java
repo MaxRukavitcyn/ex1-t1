@@ -2,6 +2,9 @@ package com.luxoft.bankapp.model;
 
 import com.luxoft.bankapp.exceptions.NotEnoughFundsException;
 
+import javax.persistence.Entity;
+
+@Entity
 public class SavingAccount extends AbstractAccount {
 
     public SavingAccount() {

@@ -3,24 +3,36 @@ package com.luxoft.bankapp.model;
 import com.luxoft.bankapp.exceptions.AccountNumberLimitException;
 import com.luxoft.bankapp.exceptions.ActiveAccountNotSet;
 import com.luxoft.bankapp.service.storage.ClientRepository;
+
+import javax.persistence.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static javax.persistence.FetchType.*;
+import static javax.persistence.GenerationType.*;
+
+@Entity
+@Table(name = "CLIENT")
 public class Client {
 
+    @Id
+    @GeneratedValue(strategy = IDENTITY)
     private long id;
 
+    @Column(name = "NAME")
     private String name;
 
+    @OneToMany(targetEntity = AbstractAccount.class, fetch = EAGER)
     private List<AbstractAccount> accounts = new ArrayList<>(2);
 
+    @OneToOne
     private AbstractAccount activeAccount;
 
+    @Column(name = "GENDER")
     private Gender gender;
 
+    @Column(name = "CITY")
     private String city;
-
-    private ClientRepository repository;
 
     public Client() {
     }
@@ -42,24 +54,10 @@ public class Client {
 
     public synchronized void deposit(double amount) {
 
-        if (!checkIfActiveAccountSet()) {
-
-            throw new ActiveAccountNotSet(name);
-        }
-
-        activeAccount.deposit(amount);
-        repository.update(this);
     }
 
     public synchronized void withdraw(double amount) {
 
-        if (!checkIfActiveAccountSet()) {
-
-            throw new ActiveAccountNotSet(name);
-        }
-
-        activeAccount.withdraw(amount);
-        repository.update(this);
     }
 
     private boolean checkIfActiveAccountSet() {
@@ -73,7 +71,6 @@ public class Client {
                 .filter(a -> a.getClass() != type)
                 .collect(Collectors.toList());
 
-        repository.update(this);
     }
 
     public void setAccounts(Set<AbstractAccount> accounts) {
@@ -81,7 +78,6 @@ public class Client {
         this.accounts.clear();
         this.accounts.addAll(accounts);
 
-        repository.update(this);
     }
 
     public List<AbstractAccount> getAccounts() {
@@ -126,8 +122,6 @@ public class Client {
             }
 
             activeAccount = account;
-
-            repository.update(this);
 
             System.out.println("Default account set for " + name + ":"
                     + activeAccount.getClass().getSimpleName());
@@ -184,12 +178,12 @@ public class Client {
         return builder.toString();
     }
 
-    public long getId() {
-        return id;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     public String getName() {
@@ -239,7 +233,4 @@ public class Client {
         }
     }
 
-    public void setRepository(ClientRepository repository) {
-        this.repository = repository;
-    }
 }
