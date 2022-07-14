@@ -1,3 +1,5 @@
+package com.luxoft.bankapp;
+
 import com.luxoft.bankapp.BankApplication;
 import com.luxoft.bankapp.model.AbstractAccount;
 import com.luxoft.bankapp.model.CheckingAccount;
@@ -18,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringJUnitConfig(BankApplication.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class BankApplicationTask1Tests {
+public class BankApplicationTests1 {
     private static final String[] CLIENT_NAMES =
             {"Jonny Bravo", "Adam Budzinski", "Anna Smith"};
 
