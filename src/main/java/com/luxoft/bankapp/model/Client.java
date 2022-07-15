@@ -1,7 +1,9 @@
 package com.luxoft.bankapp.model;
 
+import com.luxoft.bankapp.BankApplication;
 import com.luxoft.bankapp.exceptions.AccountNumberLimitException;
 import com.luxoft.bankapp.exceptions.ActiveAccountNotSet;
+import com.luxoft.bankapp.service.operations.BankingOperationsService;
 import com.luxoft.bankapp.service.storage.ClientRepository;
 
 import javax.persistence.*;
@@ -34,6 +36,13 @@ public class Client {
     @Column(name = "CITY")
     private String city;
 
+    private BankingOperationsService getBankingOperationsService() {
+
+        return BankApplication.contextProvider()
+                .getApplicationContext()
+                .getBean(BankingOperationsService.class);
+    }
+
     public Client() {
     }
 
@@ -53,11 +62,11 @@ public class Client {
     }
 
     public synchronized void deposit(double amount) {
-
+        activeAccount = getBankingOperationsService().deposit(getActiveAccount(), amount);
     }
 
     public synchronized void withdraw(double amount) {
-
+        activeAccount = getBankingOperationsService().withdraw(getActiveAccount(), amount);
     }
 
     private boolean checkIfActiveAccountSet() {
