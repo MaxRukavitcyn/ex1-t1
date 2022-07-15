@@ -228,7 +228,6 @@ public class Client {
     }
 
     public enum Gender {
-
         MALE("Mr"), FEMALE("Ms"), UNDEFINED("");
 
         private String prefix;
@@ -239,6 +238,15 @@ public class Client {
 
         Gender(String prefix) {
             this.prefix = prefix;
+        }
+
+        public static Gender parse(String s) {
+            if ("m".equals(s)) {
+                return MALE;
+            } else if ("f".equals(s)) {
+                return FEMALE;
+            }
+            return UNDEFINED;
         }
     }
 
