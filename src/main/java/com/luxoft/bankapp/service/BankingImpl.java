@@ -41,9 +41,7 @@ public class BankingImpl implements Banking {
     @Override
     public List<Client> getClients()
     {
-        return StreamSupport
-                .stream(clientRepository.findAll().spliterator(), false)
-                .collect(Collectors.toList());
+        return clientRepository.findAll();
     }
 
     @Override
@@ -88,9 +86,7 @@ public class BankingImpl implements Banking {
 
     @Override
     public List<AbstractAccount> getAllAccounts() {
-        return StreamSupport
-                .stream(accountRepository.findAll().spliterator(), false)
-                .collect(Collectors.toList());
+        return accountRepository.findAll();
     }
 
     @Override
